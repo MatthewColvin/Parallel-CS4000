@@ -15,10 +15,13 @@ int main(){
     game.live(6,5);
     game.live(6,4);
     game.live(6,3);
+    game.live(7,5);
+    game.live(7,4);
+    game.live(7,3);
  
     
 
-    for (int i=0; i<4; i++){
+    for (int i=0; i < 1000; i++){
         game.display_board(cout);
         game.SimulateLife(i);  
         cout << endl << endl << endl << endl;  
