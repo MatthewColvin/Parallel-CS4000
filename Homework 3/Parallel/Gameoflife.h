@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <pthread>
 #include <fstream>
 
 class GameOfLife{

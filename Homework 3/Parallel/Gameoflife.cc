@@ -1,4 +1,5 @@
 #include <iostream>
+#include <pthread>
 #include "Gameoflife.h"
 
 void GameOfLife::SimulateLife(int life_cycles){
@@ -84,6 +85,12 @@ int GameOfLife::alive_next_round(int x,int y){
         living_sourrounding_cells++;
     }
     
+
+    
+
+
+
+
     // checks for the cells alive around the current cell at board[x][y]
 
     if(living_sourrounding_cells >= 4){ // the cell will die from overpopultion
