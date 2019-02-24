@@ -12,8 +12,11 @@ int main(){
     game.live(5,5);
     game.live(5,4);
     game.live(5,3);
-    game.live(6,4);
     game.live(6,5);
+    game.live(6,4);
+    game.live(6,3);
+ 
+    
 
     for (int i=0; i<4; i++){
         game.display_board(cout);

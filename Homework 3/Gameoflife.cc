@@ -89,11 +89,16 @@ int GameOfLife::alive_next_round(int x,int y){
     if(living_sourrounding_cells >= 4){ // the cell will die from overpopultion
         return 0;
     }
+    if(living_sourrounding_cells == 3){ 
+        return 1; // cell is born or stays alive
+    }
+    if(living_sourrounding_cells == 2){ 
+        return board[x][y]; // cell stays in its current state
+    }
     if(living_sourrounding_cells < 2){ // the cell will die from lonliness
         return 0;
     }
-    // if living_surrounding_cells == 2,3 the cell will live
-        return 1;
+    
 
 }
 
