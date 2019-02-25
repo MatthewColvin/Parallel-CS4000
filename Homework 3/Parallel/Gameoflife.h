@@ -1,7 +1,8 @@
 #include <iostream>
 #include <vector>
-#include <pthread>
+#include <thread>
 #include <fstream>
+#include <future>
 
 class GameOfLife{
     public:
@@ -25,6 +26,11 @@ class GameOfLife{
                     0 if the cell will die or stay dead
 
         */
+       int down_left(int x, int y);
+       int down__down_right(int x, int y);
+       int up_left__left(int x, int y);
+       int up_right__up__Right(int x, int y);
+
        void make_test_board(int n);
        /*
             the function resizes board to a nxn 2D vector 
@@ -41,5 +47,6 @@ class GameOfLife{
        
     private:
         std::vector<std::vector<int>> board; // the board for the game of life
+        int get_board_size(){ return (board.size());}
 
 };

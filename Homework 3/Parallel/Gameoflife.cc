@@ -1,5 +1,7 @@
 #include <iostream>
-#include <pthread>
+#include <thread>
+#include <future>
+#include <cstdlib>
 #include "Gameoflife.h"
 
 void GameOfLife::SimulateLife(int life_cycles){
@@ -28,67 +30,15 @@ int GameOfLife::alive_next_round(int x,int y){
     int living_sourrounding_cells=0;
     int n = board.size();
 
-  
-    if(x-1 >= 0  &&  y-1 >= 0){
-        if(board[(x-1) % n][(y-1) % n] >= 1){
-            living_sourrounding_cells++;
-        }
-    }else{ // switching calculation
-        if(board[(n-x-1) % n][(n-y-1) % n] >= 1){
-            living_sourrounding_cells++;
-        }
-    }
+    std::future<int> check1 = async(std::launch::async, down_left,x,y);
+    std::future<int> check2 = async(std::launch::async,down__down_right,x,y);
+    std::future<int> check3 = async(std::launch::async,up_left__left,x,y);
+    std::future<int> check4 = async(std::launch::async,up_right__up__Right,x,y);
 
-
-
-    if(x-1 >= 0){ // - values are mapped to negative numbes in c++
-        if(board[(x-1) % n][y] >= 1){
-            living_sourrounding_cells++;
-        }
-        if(board[(x-1) % n][(y+1) % n] >= 1){
-            living_sourrounding_cells++;
-        }
-    }else{  // switching calculation
-        if(board[(n-x-1) % n][y] >= 1){
-            living_sourrounding_cells++;
-        }
-        if(board[(n-x-1) % n][(y+1) % n] >= 1){
-            living_sourrounding_cells++;
-        }
-    }
-    
-    if(y-1 >= 0){
-        if(board[(x+1) % n][(y-1) % n] >= 1){
-            living_sourrounding_cells++;
-        }
-        if(board[x][(y-1) % n] >= 1){
-            living_sourrounding_cells++;
-        }
-    }else{ //switching calculation
-        if(board[(x+1) % n][(n-y-1) % n] >= 1){
-            living_sourrounding_cells++;
-        }
-        if(board[x][(n-y-1) % n] >= 1){
-            living_sourrounding_cells++;
-        }
-    }
-
-
-    // no negative mod issues
-    if(board[(x+1) % n][(y+1) % n] >= 1){
-        living_sourrounding_cells++;
-    }
-    if(board[(x+1) % n][y] >= 1){
-        living_sourrounding_cells++;
-    }
-    if(board[x][(y+1) % n] >= 1){
-        living_sourrounding_cells++;
-    }
-    
-
-    
-
-
+    living_sourrounding_cells += check1.get();
+    living_sourrounding_cells += check2.get();  
+    living_sourrounding_cells += check3.get();
+    living_sourrounding_cells += check4.get();
 
 
     // checks for the cells alive around the current cell at board[x][y]
@@ -109,6 +59,80 @@ int GameOfLife::alive_next_round(int x,int y){
 
 }
 
+int GameOfLife::down_left(int x,int y){
+    int living_sourrounding_cells=0;
+    int n= get_board_size();
+    if(x-1 >= 0  &&  y-1 >= 0){
+        if(board[(x-1) % n][(y-1) % n] >= 1){
+            living_sourrounding_cells++;
+        }
+    }else{ // switching calculation
+        if(board[(n-x-1) % n][(n-y-1) % n] >= 1){
+            living_sourrounding_cells++;
+        }
+    }
+    return(living_sourrounding_cells);
+}
+
+int GameOfLife::down__down_right(int x, int y){
+    int living_sourrounding_cells=0;
+    int n= get_board_size();
+ if(x-1 >= 0){ // - values are mapped to negative numbes in c++
+        if(board[(x-1) % n][y] >= 1){
+            living_sourrounding_cells++;
+        }
+        if(board[(x-1) % n][(y+1) % n] >= 1){
+            living_sourrounding_cells++;
+        }
+    }else{  // switching calculation
+        if(board[(n-x-1) % n][y] >= 1){
+            living_sourrounding_cells++;
+        }
+        if(board[(n-x-1) % n][(y+1) % n] >= 1){
+            living_sourrounding_cells++;
+        }
+    }
+   return(living_sourrounding_cells);
+
+}
+
+int GameOfLife::up_left__left(int x, int y){
+      int living_sourrounding_cells=0;
+    int n= get_board_size();
+      if(y-1 >= 0){
+        if(board[(x+1) % n][(y-1) % n] >= 1){  // up left
+            living_sourrounding_cells++;
+        }
+        if(board[x][(y-1) % n] >= 1){
+            living_sourrounding_cells++;
+        }
+    }else{ //switching calculation
+        if(board[(x+1) % n][(n-y-1) % n] >= 1){ 
+            living_sourrounding_cells++;
+        }
+        if(board[x][(n-y-1) % n] >= 1){
+            living_sourrounding_cells++;
+        }
+    }
+    return(living_sourrounding_cells);
+}
+
+int GameOfLife::up_right__up__Right(int x, int y){
+    int living_sourrounding_cells=0;
+    int n= get_board_size();
+    // no negative mod issues
+    if(board[(x+1) % n][(y+1) % n] >= 1){
+        living_sourrounding_cells++;
+    }
+    if(board[(x+1) % n][y] >= 1){
+        living_sourrounding_cells++;
+    }
+    if(board[x][(y+1) % n] >= 1){
+        living_sourrounding_cells++;
+    }
+    return(living_sourrounding_cells);
+
+}
 
 void GameOfLife::display_board(std::ostream &out){
 
