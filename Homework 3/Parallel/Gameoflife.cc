@@ -15,7 +15,7 @@ void GameOfLife::SimulateLife(int life_cycles){
 
     for(int i=0;i<board.size();i++){
         for(int j=0;j<board[i].size();j++){   // for every element in the board
-            next_board[i][j]=alive_next_round(i,j);
+            next_board[i][j] = alive_next_round(i,j);
         }
     }
     board=next_board;

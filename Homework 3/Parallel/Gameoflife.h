@@ -3,6 +3,7 @@
 #include <thread>
 #include <fstream>
 #include <future>
+#include <cstdlib>
 
 class GameOfLife{
     public:
