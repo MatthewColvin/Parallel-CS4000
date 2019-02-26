@@ -1,6 +1,6 @@
 #include <iostream>
 #include <thread>
-#include "Gameoflife.h"
+#include "GameOfLife.h"
 
 std::vector<std::vector<int>> GameOfLife::SimulateLife(std::vector<std::vector<int>>& b, int life_cycles){
     
@@ -108,7 +108,7 @@ int GameOfLife::alive_next_round(int x,int y){
 }
 
 void GameOfLife::load_board(std::vector<std::vector<int>>& b){
-    board.resize(b.size);
+    board.resize(b.size());
     for(int i=0; i< b.size() ; i++){
         board[i] = b[i];
     }

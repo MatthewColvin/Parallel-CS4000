@@ -1,5 +1,5 @@
 CC=g++
-DEPS = Gameoflife.cc Test_Harness.cc GOL_display.cc
+DEPS = GameOfLife.cc Test_Harness.cc GOL_display.cc
 OUT = Gameoflife.out
 NAME = Gameoflife
 TESTCASEFOLDER = Test_input
