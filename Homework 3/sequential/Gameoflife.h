@@ -1,13 +1,10 @@
 #include <iostream>
 #include <vector>
-#include <thread>
 #include <fstream>
-#include <future>
-#include <cstdlib>
 
 class GameOfLife{
     public:
-        void SimulateLife(int life_cycles);
+        std::vector<std::vector<int>> SimulateLife(std::vector<std::vector<int>>& b,int life_cycles);
         /*
 
         */
@@ -27,17 +24,14 @@ class GameOfLife{
                     0 if the cell will die or stay dead
 
         */
-       int down_left(int x, int y);
-       int down__down_right(int x, int y);
-       int up_left__left(int x, int y);
-       int up_right__up__Right(int x, int y);
-
        void make_test_board(int n);
        /*
             the function resizes board to a nxn 2D vector 
             and loads zeros into it.
        */
-       
+       void load_board(std::vector<std::vector<int>>& b);
+       /*
+       */
        void live_forever(int x,int y){board[x][y]=2;}
        void live(int x,int y){board[x][y]=1;}
        void die (int x,int y){board[x][y]=0;}
@@ -48,6 +42,5 @@ class GameOfLife{
        
     private:
         std::vector<std::vector<int>> board; // the board for the game of life
-        int get_board_size(){ return (board.size());}
 
 };
