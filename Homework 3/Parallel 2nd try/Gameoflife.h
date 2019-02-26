@@ -4,7 +4,7 @@
 
 class GameOfLife{
     public:
-        void SimulateLife(int life_cycles);
+        std::vector<std::vector<int>> SimulateLife(std::vector<std::vector<int>>& b,int life_cycles);
         /*
 
         */
@@ -29,7 +29,9 @@ class GameOfLife{
             the function resizes board to a nxn 2D vector 
             and loads zeros into it.
        */
-       
+       void load_board(std::vector<std::vector<int>>& b);
+       /*
+       */
        void live_forever(int x,int y){board[x][y]=2;}
        void live(int x,int y){board[x][y]=1;}
        void die (int x,int y){board[x][y]=0;}

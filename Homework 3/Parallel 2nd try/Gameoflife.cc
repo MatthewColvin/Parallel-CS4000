@@ -1,21 +1,26 @@
 #include <iostream>
+#include <thread>
 #include "Gameoflife.h"
 
-void GameOfLife::SimulateLife(int life_cycles){
+std::vector<std::vector<int>> GameOfLife::SimulateLife(std::vector<std::vector<int>>& b, int life_cycles){
     
+    load_board(b);// load board into the private space  
+
     std::vector<std::vector<int>> next_board; // used to hold next rounds board 
     next_board.resize(board.size());
     for (int k=0; k < board.size();k++){
         next_board[k].resize(board.size());
     }    // board resized
 
-
-    for(int i=0;i<board.size();i++){
-        for(int j=0;j<board[i].size();j++){   // for every element in the board
-            next_board[i][j]=alive_next_round(i,j);
+    for(int x=0; x < life_cycles;x ++){
+        for(int i=0;i<board.size();i++){
+            for(int j=0;j<board[i].size();j++){   // for every element in the board
+               next_board[i][j]=alive_next_round(i,j);
+            }
         }
+        board=next_board;
     }
-    board=next_board;
+    return(next_board);
 }
 
 int GameOfLife::alive_next_round(int x,int y){
@@ -102,6 +107,12 @@ int GameOfLife::alive_next_round(int x,int y){
 
 }
 
+void GameOfLife::load_board(std::vector<std::vector<int>>& b){
+    board.resize(b.size);
+    for(int i=0; i< b.size() ; i++){
+        board[i] = b[i];
+    }
+}
 
 void GameOfLife::display_board(std::ostream &out){
 
