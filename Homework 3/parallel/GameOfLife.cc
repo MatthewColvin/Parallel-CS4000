@@ -13,7 +13,6 @@ std::vector<std::vector<int>> GameOfLife::SimulateLife(std::vector<std::vector<i
     }    // board resized
 
     
-    
 
     for(int x=0; x < life_cycles;x ++){
         for(int i=0;i<board.size();i++){
