@@ -3,7 +3,7 @@ DEPS = GameOfLife.cc Test_Harness.cc
 OUT = GameOfLife.out
 NAME = Gameoflife
 TESTCASEFOLDER = Test_input
-TESTS = make
+TESTS = parallel
 
 parallel:$(DEPS)
 	$(CC) -g $(DEPS) -pthread -lncurses -o  $(OUT)

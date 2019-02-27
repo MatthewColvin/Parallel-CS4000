@@ -4,10 +4,12 @@
 
 class GameOfLife{
     public:
+
         std::vector<std::vector<int>> SimulateLife(std::vector<std::vector<int>>& b,int life_cycles);
         /*
 
         */
+        void calculate_board_section(int thread,int from ,int to);
         void read_board(std::istream &in);
         /*
             Function to read the board in from the main program
@@ -42,5 +44,6 @@ class GameOfLife{
        
     private:
         std::vector<std::vector<int>> board; // the board for the game of life
+        std::vector<std::vector<int>> next_board; // used to hold next rounds board 
 
 };
