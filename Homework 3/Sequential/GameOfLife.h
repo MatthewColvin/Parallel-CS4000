@@ -11,8 +11,9 @@
 class GameOfLife{
     public:
         std::vector<std::vector<int>> SimulateLife(std::vector<std::vector<int>>& b,int life_cycles);
-        /*
-
+         /*
+            Function used to play the game of life. The game will be ran
+            life_cycle times and will retrun the board that is generated.
         */
         void read_board(std::istream &in);
         /*
@@ -34,9 +35,6 @@ class GameOfLife{
        /*
             the function resizes board to a nxn 2D vector 
             and loads zeros into it.
-       */
-       void load_board(std::vector<std::vector<int>>& b);
-       /*
        */
        void live_forever(int x,int y){board[x][y]=2;}
        void live(int x,int y){board[x][y]=1;}
