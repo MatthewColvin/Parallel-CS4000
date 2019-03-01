@@ -1,3 +1,9 @@
+/*
+        Matthew Colvin
+        Homework 3 
+
+        Decription: Class used to simulate the Game of life invented by John Conway.
+*/
 #include <iostream>
 #include <vector>
 #include <fstream>

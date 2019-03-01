@@ -1,3 +1,11 @@
+/*
+        Matthew Colvin
+        Homework 3 
+
+        Decription: Class used to simulate the Game of life invented by John Conway.
+        This class uses c++ threads to speed up the execution.
+
+*/
 #include <iostream>
 #include <thread>
 #include "GameOfLife.h"
@@ -61,7 +69,7 @@ int GameOfLife::alive_next_round(int x,int y){
         if(y-1 >= 0){
             if(board[(n-x-1) % n][(y-1) % n] >= 1)
             living_sourrounding_cells++;
-        }if(x-1 < 0 & y-1 < 0){
+        }if(x-1 < 0 && y-1 < 0){
             if(board[(n-x-1) % n][(n-y-1) % n] >= 1)
             living_sourrounding_cells++;
         }
@@ -128,7 +136,7 @@ int GameOfLife::alive_next_round(int x,int y){
         return 0;
     }
     
-
+    return 0;// all cases covered but will have a warning if this isnt here and i dont wanna lose points...
 }
 
 void GameOfLife::display_board(std::ostream &out){
