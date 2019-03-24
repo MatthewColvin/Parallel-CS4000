@@ -1,11 +1,10 @@
 #include <iostream>
 #include <ncurses.h>
 #include <vector>
+#include <unistd.h>
 using namespace std;
 
-void draw_matrix(vector<vector<int> > &board,
-		     int cur_row,
-		     int cur_col) {
+void print_board(vector<vector<int> > &board, int cur_row, int cur_col) {
 
   for (int j=0;j<4;j++) {
       move(0,2*j);
@@ -39,31 +38,24 @@ void draw_matrix(vector<vector<int> > &board,
   }
 }
 
-
 int main(){
-
 int rows;
- 
 int cols;
   int cur_row=0;
   int cur_col=0;
   int ch;
 
-vector<vector<int> > board;
+vector<vector<int>> P1board;
+vector<vector<int>> P2board;
     
     for (int i=0;i<4;i++) {
         vector<int> t;
         for (int j=0;j<4;j++) {
-            t.push_back(1);
+            t.push_back(0);
         }
-        board.push_back(t);
+        P1board.push_back(t); // empty both boards
+        P2board.push_back(t);
     }
-
-    board[2][2]=2;
-    board[1][1]=0;
-
-
-
     initscr();
   // Clear the screen
     clear();
@@ -75,11 +67,13 @@ vector<vector<int> > board;
   //paint_markers(rows,cols,10,0,0);
   // Redraw the screen.
     refresh();
-
-    draw_matrix(board,0,0);
-
+    print_board(P1board,1,1);
     refresh();
 
+    sleep(5);
+
     endwin();
+
+    return (0);
 
 }

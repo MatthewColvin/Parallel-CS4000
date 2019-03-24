@@ -41,9 +41,15 @@ int main(int argc, char *argv[]) {
   boost::asio::write( socket, boost::asio::buffer(msg) );
 
   // Get the response from the server!
-  boost::asio::streambuf buf2;
-  boost::asio::read_until( socket, buf2, "\n" );
-  string answer = boost::asio::buffer_cast<const char*>(buf2.data());
+  boost::asio::streambuf buf1;
+ int n = boost::asio::read_until( socket, buf1, '\n' );
+
+    istream is(&buf1);
+
+    string answer;
+
+    getline(is, answer);
+
   cout << "Result = " << answer << endl;
 }
   
