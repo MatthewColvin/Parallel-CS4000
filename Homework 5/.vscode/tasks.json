@@ -1,0 +1,21 @@
+{
+  "tasks": [
+    {
+      "type": "shell",
+      "label": "g++ build active file",
+      "command": "/usr/bin/g++",
+      "args": [
+        "-g",
+        "cracker.cc",
+        "-o",
+        "cracker",
+        "-lcrypt"
+
+      ],
+      "options": {
+        "cwd": "/home/mcolvin/Documents/Parallel-CS4000/Homework 5"
+      }
+    }
+  ],
+  "version": "2.0.0"
+}
