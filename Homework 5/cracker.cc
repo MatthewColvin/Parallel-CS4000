@@ -5,102 +5,122 @@
 #include<unistd.h>
 #include<crypt.h>
 #include<sstream>
+#include<cstring>
 
 using namespace std;
 
+void pass(string generated,vector<string> &salts,vector<string> &encrypted_passwords){
+    // for(int i=0; i < salts.size(); i++){
+    //         if(0 == strcmp(encrypted_passwords[i].c_str(), crypt(generated.c_str(),salts[i].c_str()))){
+    //             cout << "You found Password " << i << " it is " << generated << endl;
+    //         }
+    // }
+    //cout << generated << " complete" << endl;
+}
+
+
 int main(int argc, char** argv){
-
-    // ifstream ins_salts, ins_diconary;
+    ifstream ins_salts, ins_diconary, ins_encrypted;
     
-    // if(argc > 2){
-    //     ins_salts.open(argv[1]);
-    //     ins_diconary.open(argv[2]);
-    // }else{
-    //     string tmp;
-    //     cout << "Please enter name of salts file" << endl;
-    //     cin >> tmp;
-    //     ins_salts.open(tmp);
-    //     cout << "Please enter name of Diconary file" << endl;
-    //     cin >> tmp;
-    //     ins_diconary.open(tmp);
-    // }
+    if(argc > 3){
+        ins_salts.open(argv[1]);
+        ins_diconary.open(argv[2]);
+        ins_encrypted.open(argv[3]);
+    }else{
+        string tmp;
+        cout << "Please enter name of salts file" << endl;
+        //cin >> tmp;
+        ins_salts.open("given/salts");
+        cout << "Please enter name of Diconary file" << endl;
+        //cin >> tmp;
+        ins_diconary.open("given/words");
+        cout << "Please enter name of Encrypted password file"<<endl;
+        //cin >> tmp;
+        ins_encrypted.open("given/enc_passwords");
+    }
 
 
-    vector <string> salts , diconary= {"oneword"} ;
-    // while (!ins_salts.eof()){
-    //     string tmp;
-    //     ins_salts >> tmp;
-    //     salts.push_back(tmp);
-    // }
-    // while (!ins_diconary.eof()){
-    //     string tmp;
-    //     ins_diconary >> tmp;
-    //     diconary.push_back(tmp);
-    // }
-
-    
-
-    //Generate passwords
-    vector <string> possiblepasswords;
+    vector <string> salts , diconary, encrypted ;
     string tmp;
-    stringstream ss;
-    for (int i=0 ; i< diconary.size(); i++){
-        possiblepasswords.push_back(diconary[i]); // just one word no number
-        for (int o=0;o<diconary.size();o++){
-            tmp = diconary[i] + diconary[o]; // diconary word + diconary word no numbbers
-            possiblepasswords.push_back(tmp); 
+    ins_salts >>tmp;
+    while (!ins_salts.eof()){
+        salts.push_back(tmp);
+        ins_salts >> tmp;
+    }
+    ins_diconary >> tmp;
+    while (!ins_diconary.eof()){
+        diconary.push_back(tmp);
+        ins_diconary >> tmp;
+    }
+    ins_encrypted >> tmp;
+    while (!ins_encrypted.eof()){
+        encrypted.push_back(tmp);
+        ins_encrypted >> tmp;
+    }
+
+    ins_salts.close();
+    ins_diconary.close();
+    ins_encrypted.close();
+
+
+    stringstream sstmp;
+    vector<string> single_digit; // made to hold single digits 
+    vector<string> double_digit; // made to hold double digit numbers
+    vector<string> triple_digit; // mode to hold triple digit numbers
+    for(int a=0; a<10; a++){
+        sstmp << a;
+        single_digit.push_back(sstmp.str());
+        sstmp.str(string()); // clear 
+    }
+    for(int b=0; b<100; b++){
+        if(b<10){sstmp << 0 << b;}
+        else{sstmp << b;}
+        double_digit.push_back(sstmp.str());
+        sstmp.str(string());
+    }
+    for (int c=0; c<1000; c++){
+        if(c < 10){sstmp << 0 << 0 << c;}
+        else if (c < 100){sstmp << 0 << c;}
+        else{sstmp << c;}
+        triple_digit.push_back(sstmp.str());
+        sstmp.str(string());   
+    }
+
+    for (int i=0; i<diconary.size(); i++){ 
+        pass(diconary[i],salts,encrypted); // word
+        for(int a=0; a<single_digit.size();a++){
+            pass(diconary[i]+single_digit[a],salts,encrypted); // word + 1digit
+            pass(single_digit[a]+diconary[i],salts,encrypted); // 1digit + word
         }
-        for(int j=0;j<10;j++){
-            ss << j;
-            tmp = diconary[i] + ss.str(); // create a dictonary word with a number after it;
-            possiblepasswords.push_back(tmp); // put in possible password vector
-            for (int q=0;q<diconary.size();q++){
-                possiblepasswords.push_back(tmp + diconary[q]); // append another diconary word to (word + single digit) 
-            }
-            ss.str(string());// clear stream for next password
+        for(int b=0; b<double_digit.size(); b++){
+            pass(diconary[i]+double_digit[b],salts,encrypted); //word + 2digit
+            pass(double_digit[b]+diconary[i],salts,encrypted); // 2digit + word
         }
-        for(int k=0;k<100;k++){
-            if(k < 10) { // k is less than 10 so we need to put a zero in front of the single diget ; 
-                ss << 0 << k;
-            }else{      // k is double diget
-                ss << k;
-            }
-            tmp = diconary[i] + ss.str(); // dicontary word + 2 digit number 
-            possiblepasswords.push_back(tmp);
-            for(int t=0;t<diconary.size();t++){
-                possiblepasswords.push_back(tmp + diconary[t]); // dictonary word + 2 digit number + diconary word
-            }
-            ss.str(string());// clear stream for next password
+        for(int c=0; c<triple_digit.size(); c++){
+            pass(diconary[i]+triple_digit[c],salts,encrypted); // word + 3digit
+            pass(triple_digit[c]+diconary[i],salts,encrypted); // 3digit + word
         }
-        for(int l=0;l<1000;l++){
-            if(l<10){
-                ss << 0 << 0 << l; // single digit so need to append 2 zeros 
-            }else
-            if(l<100){ // double digit so need to append 1 zero 
-                ss << 0 << l ;
-            }else{ 
-                ss << l;
+
+        for (int j=0; j<diconary.size(); j++){ // add second word 
+            pass(diconary[i]+diconary[j],salts,encrypted); // word + word
+            for(int a=0; a<single_digit.size();a++){
+                pass(diconary[i]+single_digit[a]+diconary[j],salts,encrypted); // word1 + 1digit + word2
+                pass(diconary[i]+diconary[j]+single_digit[a],salts,encrypted); // word1 + word2 + 1digit
+                pass(single_digit[a]+diconary[i]+diconary[j],salts,encrypted); // 1digit + word1 + word2
             }
-            tmp = diconary[i] + ss.str();  // diconary word + 3 digit number 
-            possiblepasswords.push_back(tmp); 
-            for (int u=0; u < diconary.size();u++){
-                possiblepasswords.push_back(tmp + diconary[u]); // diconary word + 3 digits + diconary word
+            for(int b=0; b<double_digit.size(); b++){
+                pass(diconary[i]+double_digit[b]+diconary[j],salts,encrypted); // word + 2digit + word2
+                pass(diconary[i]+diconary[j]+double_digit[b],salts,encrypted); // word1 + word2 + 2digit
+                pass(double_digit[b]+diconary[i]+diconary[j],salts,encrypted); // 2digit + word1 + word2
             }
-            ss.str(string());
+            for(int c=0; c<triple_digit.size(); c++){
+                pass(diconary[i]+triple_digit[c]+diconary[j],salts,encrypted); // word + 3digit + word2
+                pass(diconary[i]+diconary[j]+triple_digit[c],salts,encrypted); // word1 + word2 + 3digit
+                pass(triple_digit[c]+diconary[i]+diconary[j],salts,encrypted); // 3digit + word1 + word2
+            }
         }
     }
 
 
-
-
-    cout << possiblepasswords.size();
-   
-    string t;
-
-    string salt = "$6$mk3DMfWk3hwXSva1";
-    string pass = "dumbpassword";
-    t = crypt(pass.c_str(),salt.c_str());
-
-    cout << t << endl;
 
 }
