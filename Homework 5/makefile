@@ -1,16 +1,16 @@
 DEPS=crackermpi.cc
-OUT=cracker
+OUT=cracker.out
 MPICC=/usr/bin/mpic++
 MPIEXE=/usr/bin/mpirun
 
 no_mpi:
-	g++ cracker.cc -o cracker
+	g++ cracker.cc -o $(OUT)
 
 cracker: $(DEPS)
 	$(MPICC) -o $(OUT) $(DEPS) -lcrypt
 
 mpi_example:
-	$(MPICC) -g helloworldmpi.cc
+	$(MPICC) -g examples/helloworldmpi.cc
 
 example_run: mpi_example
 	$(MPIEXE) --hostfile hostfile1 ./a.out 
@@ -22,10 +22,10 @@ example_leak: mpi_example
 	valgrind mpirun --hostfile hostfile1 ./a.out
 
 cracker_run_local: clean cracker
-	$(MPIEXE) --oversubscribe -np 8 cracker
+	$(MPIEXE) --oversubscribe -np 8 $(OUT)
 
 cracker_run_server: clean cracker
-	$(MPIEXE) --hostfile hostfile cracker  	
+	$(MPIEXE) --hostfile hostfile $(OUT)  	
 
 clean:
-	rm $(OUT) 
+	rm $(OUT)
