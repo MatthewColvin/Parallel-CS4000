@@ -158,6 +158,6 @@ int main(int argc,char *argv[]){
 
     twitterfile.load_data(std::cin);// can take any ifstream so could potentiall use if stream to load multiple files into the parser.
     twitterfile.load_tweet_text_map();
-    twitterfile.output_map(std::cout,1000); // only output if has over 1000 occurences
+    twitterfile.output_map(std::cout,100000); // only output if has over 1000 occurences
 
 }
