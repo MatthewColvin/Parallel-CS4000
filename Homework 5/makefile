@@ -6,6 +6,9 @@ MPIEXE=/usr/bin/mpirun
 no_mpi:
 	g++ cracker.cc -o $(OUT)
 
+cracker_omp:
+	g++ -o cracker crackeromp.cc
+	
 cracker: $(DEPS)
 	$(MPICC) -o $(OUT) $(DEPS) -lcrypt
 
