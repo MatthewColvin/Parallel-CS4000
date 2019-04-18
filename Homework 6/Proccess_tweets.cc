@@ -1,4 +1,5 @@
-#include<iostream>
+#include <iostream>
+#include <thread> // will be using thread class to parallelize map reduce 
 #include<iomanip>
 #include<fstream>
 #include<algorithm>
@@ -7,9 +8,9 @@
 #include<sstream>
 #include<string>
 #include<map>
+#include<fstream>
 
 bool invalidChar (char c){ // charactes must be ascii
-  
     return !(c>=0 && c <128);   
 } 
 
@@ -30,8 +31,10 @@ class twittercsvparser{ // helps find n-grams of csv twitter data
     private:
         int nth_gram_to_produce=1; //default to word count
         int num_entries=0;
-        std::vector<std::string> tweet_text;//,user_display_name; // vectors for the data in the csv
+        std::vector<std::string> tweet_text,user_display_name; // vectors for the data in the csv
         std::map<std::string,int> ngrams_of_tweet_text;
+
+        
     public:
         void nth_gram(int nth_gram){ nth_gram_to_produce = nth_gram;}
 
@@ -67,11 +70,12 @@ class twittercsvparser{ // helps find n-grams of csv twitter data
                         case 26: //Hashtags
                             break;
                         case 2:
-                            //user_display_name.push_back(rawdata);
-                            break;
+                            user_display_name.push_back(rawdata);
                     }
                 }num_entries++;
+
             }
+            load_tweet_text_map();
         }
         void load_tweet_text_map(){
             for(std::vector<std::string>::iterator it = tweet_text.begin();it!=tweet_text.end();it++){ // for every tweet...
@@ -145,20 +149,113 @@ class twittercsvparser{ // helps find n-grams of csv twitter data
 
 };
 
-int main(int argc,char *argv[]){
-    int nth_gram = 0;
-    if (argc == 2){
-        nth_gram = atoi(argv[1]);
-    }else{
-        std::cout << "Error Usage: mapper <int> Please rerun." << std::endl;
-        assert(-1);
+std::map<std::string,int> reduce_map(std::istream& in){
+    std::map<std::string,int> map;
+    while (!in.fail()){
+        std::string gram ; 
+        int value;
+        in >> quoted(gram);
+        in >> value; 
+
+        std::map<std::string,int>:: iterator mapit = map.find(gram); // see if we already have it in map?
+
+        if (mapit != map.end()){ //it is in the map already 
+            mapit->second += value; // add the value since it has the same key.
+        }else{ // add it to to the map
+            map.emplace(std::pair<std::string,int>(gram,value)); // put the value just recieved into the map.
+        }
+
     }
+    return(map);
+ 
+};
+void output_map(std::ostream& out,std::map<std::string,int> output, int num_occurences){ //// output map entries that have value greater than num_occurences
+    std::map<std::string,int>:: iterator mapit;
+    for(mapit = output.begin(); mapit!= output.end(); mapit++ ){
+        if(mapit->second > num_occurences ){ 
+            out << mapit->first << " , " << mapit->second << std::endl;
+        } 
+    }  
+}   
 
-    twittercsvparser twitterfile;
-    twitterfile.nth_gram(nth_gram); // sets what string size we will be looking for
+int main(){
+    twittercsvparser *iran,*venezuela1,*venezuela2,*russia,*ira,*iranian;
+    std::ifstream iran_ins,venezuela1_ins,venezuela2_ins,russia_ins,ira_ins,iranian_ins;
 
-    twitterfile.load_data(std::cin);// can take any ifstream so could potentiall use if stream to load multiple files into the parser.
-    twitterfile.load_tweet_text_map();
-    twitterfile.output_map(std::cout,0); // only output if has over 1000 occurences
-    return(0);
+    iran = new twittercsvparser();
+    venezuela1 = new twittercsvparser();
+    venezuela2 = new twittercsvparser();
+    russia = new twittercsvparser();
+    ira = new twittercsvparser();
+    iranian = new twittercsvparser();
+
+    iran_ins.open("tweetdata/iran.csv");
+    venezuela1_ins.open("tweetdata/venezuela1.csv");
+    venezuela2_ins.open("tweetdata/venezuela2.csv");
+    russia_ins.open("tweetdata/russia.csv");
+    iranian_ins.open("tweetdata/iranian.csv");
+    ira_ins.open("tweetdata/ira.csv");
+
+    std::cout << "FILES  OPENED" << std::endl;
+    std::cout.flush();
+
+    std::thread iranthread (&twittercsvparser::load_data,iran,std::ref(iran_ins));
+    std::thread venezuela1thread(&twittercsvparser::load_data,venezuela1,std::ref(venezuela1_ins));
+    std::thread venezuela2thread(&twittercsvparser::load_data,venezuela1,std::ref(venezuela1_ins));
+    std::thread russiathread(&twittercsvparser::load_data,russia,std::ref(russia_ins));
+    std::thread iranianthread(&twittercsvparser::load_data,iranian,std::ref(iranian_ins));
+    std::thread irathread(&twittercsvparser::load_data,ira,std::ref(ira_ins));
+
+
+    iranthread.join();
+    std::cout << "Iran done" << std::endl;
+    std::cout.flush();
+    venezuela1thread.join();
+    std::cout << "venezeual done" << std::endl;
+    std::cout.flush();
+    venezuela2thread.join();
+    std::cout << "vensula 2 done" << std::endl;
+    std::cout.flush();
+    russiathread.join();
+    std::cout << "russia done" << std::endl;
+    std::cout.flush();
+    iranianthread.join();
+    std::cout << "iranian done" << std::endl;
+    std::cout.flush();
+    irathread.join();
+    std::cout << "ira done" << std::endl;
+    std::cout.flush();
+
+
+    std::cout << "DONE Proccessing Files" << std::endl ;
+    std::cout.flush();
+
+    std::ofstream tmp_ofs;
+
+    tmp_ofs.open("0xAA55EF53"); // make temporary directory to hold maps
+        iran->output_map(tmp_ofs,0);
+        venezuela1->output_map(tmp_ofs,0);
+        venezuela2->output_map(tmp_ofs,0);
+        russia->output_map(tmp_ofs,0);
+        iranian->output_map(tmp_ofs,0);
+        ira->output_map(tmp_ofs,0);
+    tmp_ofs.close();
+
+    delete iran;
+    delete venezuela1;
+    delete venezuela2;
+    delete russia;
+    delete iranian;
+    delete ira;
+
+    std::ifstream to_be_reduced;
+    to_be_reduced.open("0xAA55EF53"); // open the map dump file 
+
+    output_map(std::cout,reduce_map(to_be_reduced),10000);
+    // output map that has been reduced to standard output if the key is grater than num_occurences
+
+    to_be_reduced.close();
+    remove("0xAA55EF53");
+
+    return 0;
 }
