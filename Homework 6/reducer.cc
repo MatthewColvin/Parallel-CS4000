@@ -1,3 +1,11 @@
+// 
+//          Homework 6
+//          Matthew Colvin 
+//          Reducer pourpose : Take from standard input multiple mapper
+//                             outputs to map them into a different input 
+//          
+//             
+//
 #include <iostream>
 #include <iomanip>
 #include <map>
@@ -23,10 +31,9 @@ std::map<std::string,int> reduce_map(std::istream& in){
  
 };
 void output_map(std::ostream& out,std::map<std::string,int> output, int num_occurences){ //// output map entries that have value greater than num_occurences
-    std::map<std::string,int>:: iterator mapit;
-    for(mapit = output.begin(); mapit!= output.end(); mapit++ ){
-        if(mapit->second > num_occurences ){ 
-            out << mapit->first << " , " << mapit->second << std::endl;
+    for(auto mapit:output){
+        if(mapit.second > num_occurences ){ 
+            out << mapit.first << " , " << mapit.second << std::endl;
         } 
     }  
 }    
@@ -34,6 +41,6 @@ void output_map(std::ostream& out,std::map<std::string,int> output, int num_occu
 int main (int argc, char* argv[]){
     std::map<std::string,int> reducedmap =
     reduce_map(std::cin); 
-    output_map(std::cout,reducedmap,10000); // output all n-grams that occured more than 1000 times.
+    output_map(std::cout,reducedmap,1000); // output all n-grams that occured more than 1000 times.
     return(0);
 }

@@ -1,3 +1,11 @@
+// 
+//          Homework 6
+//          Matthew Colvin 
+//          Mapper pourpose : Take from standard input twitter csv files and create 
+//                            n-gram with the tweets , hashtags and links removed 
+//
+//             Usage : mapper.out <gram_length>
+//
 #include<iostream>
 #include<iomanip>
 #include<fstream>
@@ -76,37 +84,22 @@ class twittercsvparser{ // helps find n-grams of csv twitter data
         void load_tweet_text_map(){
             for(std::vector<std::string>::iterator it = tweet_text.begin();it!=tweet_text.end();it++){ // for every tweet...
                 std::string tweet = *it;
-                std::stringstream tweet_ss(tweet);
-
                 std::string gram; // the string to be check if it is in the map
                 
-                size_t starttoremove = tweet.find("https://"); // find the first web address.
-                while( starttoremove != std::string::npos ){
-                    
-                    tweet_ss.seekg(starttoremove-1); // got to one postion before the web address.
-
-                    std::string address;
-                    tweet_ss >> address; // get the address need to know the length to remove
-
-                    tweet.replace(starttoremove,address.length(),""); // delete the address out of string
-                    tweet_ss.str(tweet); // update the stream so it matches the tweet.
-
-                    starttoremove = tweet.find("https://",starttoremove+1); // find next location of http:// in new string 
-                }// removed all https web addresses from tweet.
+                
 
                 tweet.erase(remove_if(tweet.begin(),tweet.end(), invalidChar), tweet.end());//  remove every non ascii character.
 
-                std::vector<char> to_remove = {'"','!','?',';',':','.','|','#',','};
+                std::vector<char> to_remove = {'"','!','?',';',':','.','|',',','&',')','(','-','[',']','/'};
                 std::vector<char>::iterator chars;
                 for(chars = to_remove.begin();chars!=to_remove.end();chars++){
                     tweet.erase(remove(tweet.begin(),tweet.end(),*chars),tweet.end()); // remove all single charactes in the to_remove vector
                 } 
 
-                tweet_ss.str(tweet); // sync tweet_ss with tweet after single chars are removed
+                remove_web_and_hashtags(tweet);
+                std::stringstream tweet_ss(tweet);
 
                 int next_loop_stream_start_pos = 0;
-                tweet_ss.seekg(next_loop_stream_start_pos); // reset reading of the ss of the tweet
-                
                 while(!tweet_ss.fail()){
                     for(int i=0; i < nth_gram_to_produce && !tweet_ss.fail(); i++ ){
                         std::string tmp;
@@ -124,15 +117,50 @@ class twittercsvparser{ // helps find n-grams of csv twitter data
                             }else{
                                 std::pair<std::string,int> new_gram;
                                 new_gram.first = gram;
-                                new_gram.second = 0;
+                                new_gram.second = 1;
                                 ngrams_of_tweet_text.insert(new_gram);
                             }
                         } // gram added to the map or incremented the occurence
                     }// creates the gram with the proper number of strings or untill we run out of words in the tweet
                     gram="";// reset gram for next one to be produced.
-                    tweet_ss.seekg(next_loop_stream_start_pos);
+                    tweet_ss.seekg(next_loop_stream_start_pos); // move stream pointer where it was perviously stored
                 }
             }
+        }
+        void remove_web_and_hashtags(std::string& tweet){
+            std::stringstream tweet_ss(tweet);
+            tweet_ss.str(tweet); // sync tweet_ss with tweet after single chars are removed
+            int starttoremove = tweet.find("https//"); // find the first web address. // i removed all the :
+            while( starttoremove != std::string::npos ){
+                
+                tweet_ss.seekg(starttoremove); // got to one postion before the web address.
+
+                std::string address;
+                tweet_ss >> address; // get the address need to know the length to remove
+
+                tweet.replace(starttoremove,address.length(),""); // delete the address out of string
+                tweet_ss.str(tweet); // update the stream so it matches the tweet.
+
+                starttoremove = tweet.find("https//",starttoremove+1); // find next location of http:// in new string 
+            }// removed all https web addresses from tweet.
+        
+            starttoremove = tweet.find("#"); // find the first web address.
+            while( starttoremove != std::string::npos ){
+                tweet_ss.seekg(starttoremove); // got to one postion before the hashtag.
+
+                std::string hashtag;
+                tweet_ss >> hashtag; // get the address need to know the length to remove
+
+                tweet.replace(starttoremove,hashtag.length(),""); // delete the address out of string
+                tweet_ss.str(tweet); // update the stream so it matches the tweet.
+
+                starttoremove = tweet.find("#",starttoremove+1); // find next location of http:// in new string 
+            }// removed all https web addresses from tweet.
+        
+
+
+
+
         }
         void output_map(std::ostream& out,int num_occurences){ //// output map
             std::map<std::string,int>:: iterator mapit;
